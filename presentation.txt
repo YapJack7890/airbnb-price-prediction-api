@@ -1,0 +1,144 @@
+For your Airbnb price prediction, these are the strongest examples.
+
+1. Clear nonlinear relationships → prefer nonlinear models
+
+Suppose your EDA shows:
+
+bedrooms vs price curves upward
+bathrooms vs price curves upward nonlinearly
+accommodates vs price has a nonlinear trend
+
+That is evidence that a simple linear model may be restrictive.
+
+Then your reasoning can be:
+
+EDA
+↓
+Nonlinear relationships observed
+↓
+OLS linearity assumption may be too restrictive
+↓
+Evaluate tree-based / nonlinear models
+↓
+Random Forest / Gradient Boosting / XGBoost
+
+This is one of your strongest arguments.
+
+But say "suggests", not "proves."
+
+2. Strong interactions / different effects across groups → tree models become attractive
+
+Suppose price behaves differently depending on:
+
+accommodates × room_type
+bedrooms × neighbourhood
+bathrooms × property_type
+
+For example, 4 bedrooms in an entire home may have a very different pricing pattern from 4 bedrooms in a private room.
+
+That suggests interactions.
+
+A basic linear model without interaction terms won't automatically capture:
+
+bedrooms×room_type
+
+XGBoost and other tree-based methods can capture many such interactions automatically.
+
+So your reasoning could be:
+
+"Price appeared to depend on combinations of property characteristics rather than individual features alone, motivating nonlinear ensemble models capable of modelling feature interactions."
+
+That's much stronger than saying "XGBoost is popular."
+
+3. Large target skew / extreme prices → model and metric choice matter
+
+If your price distribution looks like:
+
+lots of low/moderate prices
+↓
+small number of extremely expensive listings
+
+then you should expect:
+
+RMSE to be strongly affected by extreme errors
+linear regression coefficients to be sensitive to extreme observations
+residuals to potentially be highly non-normal
+prediction errors to vary with price level
+
+This can motivate investigating:
+
+log transformation of price
+robust approaches
+tree-based models
+MAE alongside RMSE
+
+It doesn't automatically mean XGBoost is best.
+
+4. Outliers and influential observations → model robustness becomes a consideration
+
+If your OLS diagnostics show substantial influential observations:
+
+Cook's Distance
++
+large residuals
++
+high-leverage observations
+
+then that is evidence that OLS may be sensitive to a small number of listings.
+
+That can motivate comparing OLS against models such as:
+
+Random Forest
+Gradient Boosting
+XGBoost
+
+But again, Cook's Distance doesn't prove XGBoost is better. You need the model comparison to establish that.
+
+5. Weak individual relationships → multivariate models become more important
+
+Your accommodates example is actually useful here.
+
+The scatter shows:
+
+huge price variation at the same accommodation level.
+
+That tells you accommodates alone is insufficient.
+
+That does not mean "use XGBoost."
+
+It means:
+
+Price appears to depend on multiple variables simultaneously.
+
+Then you can motivate a multivariate model, and EDA can further show whether the relationships are linear or nonlinear.
+
+What would actually change your model choice?
+
+I'd use this logic:
+
+EDA finding	Modeling implication
+Mostly linear relationships	Linear regression is reasonable baseline
+Strong nonlinear relationships	Add nonlinear models
+Important feature interactions	Tree-based/ensemble models become attractive
+Strong multicollinearity	Linear model needs attention; regularization may help
+Heavy target skew	Consider log-transform/robust methods
+Many influential observations	Compare OLS with less sensitive alternatives
+High-dimensional sparse categorical data	Consider regularized/boosting approaches
+Weak univariate relationships but strong multivariate structure	Use multivariate models; don't discard features based only on correlation
+For your Airbnb project specifically
+
+Your current EDA supports this story:
+
+Individual numerical features show noisy but generally positive relationships with price, while several relationships appear nonlinear. Price also varies substantially within the same feature levels, indicating that no single variable explains price adequately. These observations motivate comparing linear regression with nonlinear tree-based models and ensemble methods.
+
+That's defensible.
+
+Then your actual model results determine the winner.
+
+In your current results, you already have evidence that nonlinear models are useful:
+
+Linear Regression  Test R² = 0.331
+XGBoost             Test R² = 0.488
+Tuned XGBoost       Test R² = 0.558
+
+That is much stronger evidence for model choice than the EDA plots alone.
