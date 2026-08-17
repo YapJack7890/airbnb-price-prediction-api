@@ -1,3 +1,4 @@
 models/*.pkl
 model_decisions_notes.txt
 presentation.txtpresentation.txt
+.ipynb_checkpoints/
